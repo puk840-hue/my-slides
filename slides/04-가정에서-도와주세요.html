@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko"><head>
+<title>가정에서 도와주세요</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1280px; height:720px; overflow:hidden; }
+  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif; }
+  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }
+  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }
+  h1, h2 { font-family:"Gowun Batang",serif; font-weight:700; line-height:1.3; }
+  h2 { font-size:52px; margin:12px 0 40px; }
+  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }
+  .cards { display:grid; gap:28px; flex:1; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }
+  .card .icon { font-size:48px; margin-bottom:16px; }
+  .card h3 { font-size:28px; margin-bottom:12px; }
+  .card p { font-size:21px; line-height:1.6; color:var(--muted); }
+</style>
+<style>
+  .cards { grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(2,1fr); gap:22px; }
+  .card { display:flex; gap:24px; align-items:flex-start; padding:28px 32px; }
+  .card .icon { font-size:44px; margin:0; }
+  .card h3 { font-size:26px; margin-bottom:8px; }
+  .card p { font-size:20px; }
+</style>
+</head><body>
+<div class="slide">
+  <div class="eyebrow">AT HOME</div>
+  <h2>가정에서 이렇게 도와주세요</h2>
+  <div class="cards">
+    <div class="card"><div class="icon">⏰</div><div><h3>하루 20분, 같은 시간</h3><p>저녁 식사 후처럼 정해진 시간에 읽으면 습관이 빨리 잡힙니다.</p></div></div>
+    <div class="card"><div class="icon">📵</div><div><h3>가족이 함께 읽기</h3><p>그 시간만큼은 TV·휴대폰을 잠시 내려놓고 어른도 함께 읽어 주세요.</p></div></div>
+    <div class="card"><div class="icon">📖</div><div><h3>아이가 고른 책 존중하기</h3><p>만화나 쉬운 책이어도 괜찮아요. 읽는 즐거움이 먼저입니다.</p></div></div>
+    <div class="card"><div class="icon">❓</div><div><h3>검사보다 질문하기</h3><p>"어떤 장면이 제일 재미있었어?" 한마디가 독후감보다 힘이 셉니다.</p></div></div>
+  </div>
+  <div class="num">{{page}} / {{total}}</div>
+</div>
+</body></html>

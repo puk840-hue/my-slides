@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>우리 반 독서 습관 만들기 - 학부모 설명회</title>
+<!-- 이 파일은 build.js 가 만듭니다. 직접 고치지 말고 slides/ 를 고친 뒤 node build.js 를 실행하세요. -->
+<style>
+  :root { --bg:#1f1e1c; --bar:#2b2a27; --fg:#f4efe6; --muted:#a59f93; --accent:#e07a5f; --panel:#fbf7ef; --panel-ink:#2b2a27; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; }
+  body { background:var(--bg); color:var(--fg); font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; display:flex; flex-direction:column; overflow:hidden; }
+  #stage { flex:1; position:relative; overflow:hidden; }
+  #frame { position:absolute; left:50%; top:50%; width:1280px; height:720px; transform-origin:center; box-shadow:0 10px 40px rgba(0,0,0,.4); }
+  #frame iframe { position:absolute; inset:0; width:1280px; height:720px; border:0; background:#fff; pointer-events:none; visibility:hidden; }
+  #frame iframe.on { visibility:visible; }
+  .nav { position:absolute; top:50%; transform:translateY(-50%); width:56px; height:56px; border-radius:50%; border:0; background:rgba(255,255,255,.12); color:var(--fg); font-size:26px; cursor:pointer; }
+  .nav:hover { background:rgba(255,255,255,.25); }
+  .nav:disabled { opacity:.25; cursor:default; }
+  #prev { left:12px; } #next { right:12px; }
+  body.fs .nav { opacity:0; } body.fs .nav:hover { opacity:1; }
+  #bar { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--bar); font-size:15px; }
+  #bar .title { flex:1; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #bar button { background:transparent; color:var(--fg); border:1px solid #4a4741; border-radius:8px; padding:7px 14px; font:inherit; cursor:pointer; }
+  #bar button:hover { border-color:var(--accent); color:var(--accent); }
+  #counter { min-width:64px; text-align:center; font-variant-numeric:tabular-nums; }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:10; }
+  .modal.open { display:flex; }
+  .panel { background:var(--panel); color:var(--panel-ink); border-radius:16px; padding:28px; max-width:min(520px, calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; }
+  .panel h2 { margin:0 0 16px; font-size:22px; }
+  #toc ol { margin:0; padding:0; list-style:none; }
+  #toc li button { width:100%; text-align:left; background:none; border:0; border-radius:8px; padding:10px 12px; font:inherit; font-size:18px; color:inherit; cursor:pointer; display:flex; gap:12px; }
+  #toc li button:hover { background:#efe7d8; }
+  #toc li button.current { background:#f3d9cf; font-weight:700; }
+  #toc li .n { color:#c8553d; font-variant-numeric:tabular-nums; }
+  #qr .panel { text-align:center; }
+  #qrcode svg { width:min(320px, 70vw); height:auto; display:block; margin:0 auto; }
+  #qrurl { margin-top:12px; font-size:13px; color:#6f6a60; word-break:break-all; }
+  .hint { margin-top:14px; font-size:13px; color:#6f6a60; }
+  body.fs #bar { display:none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"></div>
+  <button class="nav" id="prev" aria-label="이전 슬라이드">‹</button>
+  <button class="nav" id="next" aria-label="다음 슬라이드">›</button>
+</div>
+<div id="bar">
+  <span class="title">우리 반 독서 습관 만들기 - 학부모 설명회</span>
+  <span id="counter"></span>
+  <button id="btn-toc">목차</button>
+  <button id="btn-qr">QR</button>
+  <button id="btn-fs">전체화면</button>
+</div>
+
+<div class="modal" id="toc"><div class="panel"><h2>목차</h2><ol></ol></div></div>
+<div class="modal" id="qr"><div class="panel"><h2>이 발표 페이지 주소</h2><div id="qrcode"></div><div id="qrurl"></div><div class="hint">휴대폰 카메라로 찍으면 이 페이지가 열립니다.</div></div></div>
+
+<script src="vendor/qrcode.js"></script>
+<script>
+const SLIDES = [{"title":"표지","html":"\u003c!doctype html>\n\u003chtml lang=\"ko\">\u003chead>\n\u003ctitle>표지\u003c/title>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=1280\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap\">\n\u003cstyle>\n  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }\n  * { box-sizing:border-box; margin:0; padding:0; }\n  html, body { width:1280px; height:720px; overflow:hidden; }\n  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:\"Noto Sans KR\",\"Apple SD Gothic Neo\",\"Malgun Gothic\",sans-serif; }\n  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }\n  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }\n  h1, h2 { font-family:\"Gowun Batang\",serif; font-weight:700; line-height:1.3; }\n  h2 { font-size:52px; margin:12px 0 40px; }\n  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }\n  .cards { display:grid; gap:28px; flex:1; }\n  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }\n  .card .icon { font-size:48px; margin-bottom:16px; }\n  .card h3 { font-size:28px; margin-bottom:12px; }\n  .card p { font-size:21px; line-height:1.6; color:var(--muted); }\n\u003c/style>\n\u003cstyle>\n  .slide { justify-content:center; padding-left:120px; }\n  .slide::before { content:\"\"; position:absolute; left:0; top:0; bottom:0; width:28px; background:var(--accent); }\n  .books { position:absolute; right:110px; bottom:0; display:flex; align-items:flex-end; gap:10px; }\n  .books span { display:block; width:46px; border-radius:6px 6px 0 0; }\n  .eyebrow { margin-bottom:20px; }\n  h1 { font-size:84px; margin-bottom:20px; }\n  .sub { font-size:36px; color:var(--muted); font-family:\"Gowun Batang\",serif; }\n  .meta { margin-top:72px; font-size:24px; display:flex; gap:32px; color:var(--ink); }\n  .meta b { color:var(--leaf); }\n\u003c/style>\n\u003c/head>\u003cbody>\n\u003cdiv class=\"slide\">\n  \u003cdiv class=\"eyebrow\">함께 읽는 교실\u003c/div>\n  \u003ch1>우리 반 독서 습관 만들기\u003c/h1>\n  \u003cdiv class=\"sub\">학부모 설명회\u003c/div>\n  \u003cdiv class=\"meta\">\u003cspan>\u003cb>발표\u003c/b> 5학년 3반 담임교사\u003c/span>\u003cspan>\u003cb>일시\u003c/b> 2026년 10월 16일\u003c/span>\u003c/div>\n  \u003cdiv class=\"books\" aria-hidden=\"true\">\n    \u003cspan style=\"height:260px;background:#4a7c59\">\u003c/span>\n    \u003cspan style=\"height:320px;background:#e0a458\">\u003c/span>\n    \u003cspan style=\"height:220px;background:#c8553d\">\u003c/span>\n    \u003cspan style=\"height:290px;background:#3d5a80\">\u003c/span>\n    \u003cspan style=\"height:240px;background:#98c1d9\">\u003c/span>\n  \u003c/div>\n\u003c/div>\n\u003c/body>\u003c/html>\n"},{"title":"왜 독서 습관인가요?","html":"\u003c!doctype html>\n\u003chtml lang=\"ko\">\u003chead>\n\u003ctitle>왜 독서 습관인가요?\u003c/title>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=1280\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap\">\n\u003cstyle>\n  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }\n  * { box-sizing:border-box; margin:0; padding:0; }\n  html, body { width:1280px; height:720px; overflow:hidden; }\n  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:\"Noto Sans KR\",\"Apple SD Gothic Neo\",\"Malgun Gothic\",sans-serif; }\n  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }\n  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }\n  h1, h2 { font-family:\"Gowun Batang\",serif; font-weight:700; line-height:1.3; }\n  h2 { font-size:52px; margin:12px 0 40px; }\n  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }\n  .cards { display:grid; gap:28px; flex:1; }\n  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }\n  .card .icon { font-size:48px; margin-bottom:16px; }\n  .card h3 { font-size:28px; margin-bottom:12px; }\n  .card p { font-size:21px; line-height:1.6; color:var(--muted); }\n\u003c/style>\n\u003cstyle> .cards { grid-template-columns:repeat(3,1fr); } \u003c/style>\n\u003c/head>\u003cbody>\n\u003cdiv class=\"slide\">\n  \u003cdiv class=\"eyebrow\">WHY\u003c/div>\n  \u003ch2>왜 '독서 습관'일까요?\u003c/h2>\n  \u003cdiv class=\"cards\">\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">🧠\u003c/div>\u003ch3>생각하는 힘\u003c/h3>\u003cp>글을 따라가며 이유를 묻고 짐작하는 동안 사고력과 집중력이 자랍니다.\u003c/p>\u003c/div>\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">💬\u003c/div>\u003ch3>말과 글의 힘\u003c/h3>\u003cp>다양한 낱말과 문장을 만나며 어휘력·표현력이 자연스럽게 넓어집니다.\u003c/p>\u003c/div>\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">🌱\u003c/div>\u003ch3>평생 가는 습관\u003c/h3>\u003cp>한 권을 잘 읽는 것보다 매일 조금씩 읽는 습관이 더 오래 남습니다.\u003c/p>\u003c/div>\n  \u003c/div>\n  \u003cdiv class=\"num\">2 / 5\u003c/div>\n\u003c/div>\n\u003c/body>\u003c/html>\n"},{"title":"우리 반 독서 활동","html":"\u003c!doctype html>\n\u003chtml lang=\"ko\">\u003chead>\n\u003ctitle>우리 반 독서 활동\u003c/title>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=1280\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap\">\n\u003cstyle>\n  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }\n  * { box-sizing:border-box; margin:0; padding:0; }\n  html, body { width:1280px; height:720px; overflow:hidden; }\n  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:\"Noto Sans KR\",\"Apple SD Gothic Neo\",\"Malgun Gothic\",sans-serif; }\n  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }\n  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }\n  h1, h2 { font-family:\"Gowun Batang\",serif; font-weight:700; line-height:1.3; }\n  h2 { font-size:52px; margin:12px 0 40px; }\n  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }\n  .cards { display:grid; gap:28px; flex:1; }\n  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }\n  .card .icon { font-size:48px; margin-bottom:16px; }\n  .card h3 { font-size:28px; margin-bottom:12px; }\n  .card p { font-size:21px; line-height:1.6; color:var(--muted); }\n\u003c/style>\n\u003cstyle>\n  .rows { display:flex; flex-direction:column; gap:12px; margin-top:-12px; }\n  .row { display:grid; grid-template-columns:200px 1fr; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 32px; }\n  .row .when { font-size:22px; font-weight:700; color:var(--leaf); }\n  .row .what { font-size:24px; font-weight:700; line-height:1.4; }\n  .row .what small { display:block; font-size:19px; font-weight:400; color:var(--muted); margin-top:2px; }\n\u003c/style>\n\u003c/head>\u003cbody>\n\u003cdiv class=\"slide\">\n  \u003cdiv class=\"eyebrow\">IN CLASS\u003c/div>\n  \u003ch2>교실에서는 이렇게 읽어요\u003c/h2>\n  \u003cdiv class=\"rows\">\n    \u003cdiv class=\"row\">\u003cdiv class=\"when\">매일 아침\u003c/div>\u003cdiv class=\"what\">아침 10분 독서\u003csmall>등교 후 조용히 스스로 고른 책 읽기\u003c/small>\u003c/div>\u003c/div>\n    \u003cdiv class=\"row\">\u003cdiv class=\"when\">매주\u003c/div>\u003cdiv class=\"what\">독서 기록장 한 줄 쓰기\u003csmall>읽은 책 제목과 기억에 남는 한 문장 남기기\u003c/small>\u003c/div>\u003c/div>\n    \u003cdiv class=\"row\">\u003cdiv class=\"when\">격주\u003c/div>\u003cdiv class=\"what\">책 친구와 이야기 나누기\u003csmall>짝과 함께 읽은 책을 소개하고 질문 주고받기\u003c/small>\u003c/div>\u003c/div>\n    \u003cdiv class=\"row\">\u003cdiv class=\"when\">매달\u003c/div>\u003cdiv class=\"what\">우리 반 독서 나무\u003csmall>읽은 권수만큼 잎을 붙여 함께 키우는 나무\u003c/small>\u003c/div>\u003c/div>\n  \u003c/div>\n  \u003cdiv class=\"num\">3 / 5\u003c/div>\n\u003c/div>\n\u003c/body>\u003c/html>\n"},{"title":"가정에서 도와주세요","html":"\u003c!doctype html>\n\u003chtml lang=\"ko\">\u003chead>\n\u003ctitle>가정에서 도와주세요\u003c/title>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=1280\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap\">\n\u003cstyle>\n  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }\n  * { box-sizing:border-box; margin:0; padding:0; }\n  html, body { width:1280px; height:720px; overflow:hidden; }\n  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:\"Noto Sans KR\",\"Apple SD Gothic Neo\",\"Malgun Gothic\",sans-serif; }\n  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }\n  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }\n  h1, h2 { font-family:\"Gowun Batang\",serif; font-weight:700; line-height:1.3; }\n  h2 { font-size:52px; margin:12px 0 40px; }\n  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }\n  .cards { display:grid; gap:28px; flex:1; }\n  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }\n  .card .icon { font-size:48px; margin-bottom:16px; }\n  .card h3 { font-size:28px; margin-bottom:12px; }\n  .card p { font-size:21px; line-height:1.6; color:var(--muted); }\n\u003c/style>\n\u003cstyle>\n  .cards { grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(2,1fr); gap:22px; }\n  .card { display:flex; gap:24px; align-items:flex-start; padding:28px 32px; }\n  .card .icon { font-size:44px; margin:0; }\n  .card h3 { font-size:26px; margin-bottom:8px; }\n  .card p { font-size:20px; }\n\u003c/style>\n\u003c/head>\u003cbody>\n\u003cdiv class=\"slide\">\n  \u003cdiv class=\"eyebrow\">AT HOME\u003c/div>\n  \u003ch2>가정에서 이렇게 도와주세요\u003c/h2>\n  \u003cdiv class=\"cards\">\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">⏰\u003c/div>\u003cdiv>\u003ch3>하루 20분, 같은 시간\u003c/h3>\u003cp>저녁 식사 후처럼 정해진 시간에 읽으면 습관이 빨리 잡힙니다.\u003c/p>\u003c/div>\u003c/div>\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">📵\u003c/div>\u003cdiv>\u003ch3>가족이 함께 읽기\u003c/h3>\u003cp>그 시간만큼은 TV·휴대폰을 잠시 내려놓고 어른도 함께 읽어 주세요.\u003c/p>\u003c/div>\u003c/div>\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">📖\u003c/div>\u003cdiv>\u003ch3>아이가 고른 책 존중하기\u003c/h3>\u003cp>만화나 쉬운 책이어도 괜찮아요. 읽는 즐거움이 먼저입니다.\u003c/p>\u003c/div>\u003c/div>\n    \u003cdiv class=\"card\">\u003cdiv class=\"icon\">❓\u003c/div>\u003cdiv>\u003ch3>검사보다 질문하기\u003c/h3>\u003cp>\"어떤 장면이 제일 재미있었어?\" 한마디가 독후감보다 힘이 셉니다.\u003c/p>\u003c/div>\u003c/div>\n  \u003c/div>\n  \u003cdiv class=\"num\">4 / 5\u003c/div>\n\u003c/div>\n\u003c/body>\u003c/html>\n"},{"title":"함께해요","html":"\u003c!doctype html>\n\u003chtml lang=\"ko\">\u003chead>\n\u003ctitle>함께해요\u003c/title>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=1280\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap\">\n\u003cstyle>\n  :root { --paper:#fbf7ef; --ink:#2b2a27; --muted:#6f6a60; --accent:#c8553d; --leaf:#4a7c59; --card:#ffffff; --line:#e6dfd1; }\n  * { box-sizing:border-box; margin:0; padding:0; }\n  html, body { width:1280px; height:720px; overflow:hidden; }\n  body { word-break:keep-all; background:var(--paper); color:var(--ink); font-family:\"Noto Sans KR\",\"Apple SD Gothic Neo\",\"Malgun Gothic\",sans-serif; }\n  .slide { position:relative; width:1280px; height:720px; padding:72px 96px; display:flex; flex-direction:column; }\n  .eyebrow { font-size:22px; font-weight:700; color:var(--accent); letter-spacing:.08em; }\n  h1, h2 { font-family:\"Gowun Batang\",serif; font-weight:700; line-height:1.3; }\n  h2 { font-size:52px; margin:12px 0 40px; }\n  .num { position:absolute; right:56px; bottom:36px; font-size:18px; color:var(--muted); }\n  .cards { display:grid; gap:28px; flex:1; }\n  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 32px; }\n  .card .icon { font-size:48px; margin-bottom:16px; }\n  .card h3 { font-size:28px; margin-bottom:12px; }\n  .card p { font-size:21px; line-height:1.6; color:var(--muted); }\n\u003c/style>\n\u003cstyle>\n  .slide { justify-content:center; align-items:center; text-align:center; }\n  h2 { font-size:64px; margin:16px 0 28px; }\n  .lead { font-size:28px; color:var(--muted); line-height:1.7; }\n  .pill { margin-top:56px; display:inline-flex; gap:16px; }\n  .pill span { background:var(--card); border:1px solid var(--line); border-radius:999px; padding:14px 30px; font-size:22px; }\n  .pill b { color:var(--accent); }\n\u003c/style>\n\u003c/head>\u003cbody>\n\u003cdiv class=\"slide\">\n  \u003cdiv class=\"eyebrow\">TOGETHER\u003c/div>\n  \u003ch2>학교와 가정이 함께 읽어요\u003c/h2>\n  \u003cp class=\"lead\">매일의 작은 20분이 아이의 평생 독서 습관이 됩니다.\u003cbr>궁금하신 점은 편하게 질문해 주세요.\u003c/p>\n  \u003cdiv class=\"pill\">\u003cspan>\u003cb>Q&amp;A\u003c/b> 질의응답\u003c/span>\u003cspan>\u003cb>문의\u003c/b> 알림장 · 학교 전화\u003c/span>\u003c/div>\n  \u003cdiv class=\"num\">5 / 5\u003c/div>\n\u003c/div>\n\u003c/body>\u003c/html>\n"}];
+
+const frame = document.getElementById('frame');
+const counter = document.getElementById('counter');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const tocList = document.querySelector('#toc ol');
+
+const frames = SLIDES.map((s, i) => {
+  const f = document.createElement('iframe');
+  f.title = s.title;
+  f.setAttribute('tabindex', '-1');
+  f.srcdoc = s.html;
+  frame.appendChild(f);
+  return f;
+});
+
+SLIDES.forEach((s, i) => {
+  const li = document.createElement('li');
+  const b = document.createElement('button');
+  b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, '0') + '</span><span></span>';
+  b.lastChild.textContent = s.title;
+  b.onclick = () => { go(i); closeModals(); };
+  li.appendChild(b);
+  tocList.appendChild(li);
+});
+
+let current = 0;
+function go(i) {
+  current = Math.max(0, Math.min(SLIDES.length - 1, i));
+  frames.forEach((f, k) => f.classList.toggle('on', k === current));
+  tocList.querySelectorAll('button').forEach((b, k) => b.classList.toggle('current', k === current));
+  counter.textContent = (current + 1) + ' / ' + SLIDES.length;
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === SLIDES.length - 1;
+  history.replaceState(null, '', '#' + (current + 1));
+}
+
+function fit() {
+  const stage = document.getElementById('stage');
+  const pad = document.fullscreenElement ? 0 : 144; // 일반 화면에서는 좌우 화살표 자리를 비워 둔다
+  const s = Math.min((stage.clientWidth - pad) / 1280, (stage.clientHeight - 32) / 720);
+  frame.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+}
+
+function closeModals() { document.querySelectorAll('.modal.open').forEach((m) => m.classList.remove('open')); }
+function toggleModal(id) {
+  const m = document.getElementById(id);
+  const wasOpen = m.classList.contains('open');
+  closeModals();
+  if (!wasOpen) m.classList.add('open');
+}
+
+function showQR() {
+  const url = location.href;
+  const qr = qrcode(0, 'M');
+  qr.addData(url, 'Byte');
+  qr.make();
+  document.getElementById('qrcode').innerHTML = qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true });
+  document.getElementById('qrurl').textContent = url;
+  toggleModal('qr');
+}
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(() => {});
+}
+
+qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+prevBtn.onclick = () => go(current - 1);
+nextBtn.onclick = () => go(current + 1);
+document.getElementById('btn-toc').onclick = () => toggleModal('toc');
+document.getElementById('btn-qr').onclick = showQR;
+document.getElementById('btn-fs').onclick = toggleFullscreen;
+document.querySelectorAll('.modal').forEach((m) => m.addEventListener('click', (e) => { if (e.target === m) closeModals(); }));
+document.addEventListener('fullscreenchange', () => { document.body.classList.toggle('fs', !!document.fullscreenElement); fit(); });
+window.addEventListener('resize', fit);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') return closeModals();
+  if (document.querySelector('.modal.open')) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+  else if (e.key === 'Home') go(0);
+  else if (e.key === 'End') go(SLIDES.length - 1);
+  else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+});
+
+const start = parseInt(location.hash.slice(1), 10);
+go(Number.isFinite(start) ? start - 1 : 0);
+fit();
+</script>
+</body>
+</html>
